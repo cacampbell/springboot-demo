@@ -1,0 +1,15 @@
+spring:
+    application:
+        admin:
+            enabled: true
+    main:
+        banner-mode: "off"
+    security:
+        user:
+            name: "username"
+            password: "password"
+    data:
+        neo4j:
+            uri: "file:///tmp/graph.db"
+    devtools:
+        add-properties: true
