@@ -1,7 +1,8 @@
 gradlew
 gradlew.bat
 .gradle/
-gradle/
 build/
 dist/
 .env
+*.class
+bin/
