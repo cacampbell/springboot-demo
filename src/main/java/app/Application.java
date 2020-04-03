@@ -1,6 +1,6 @@
 package app;
 
-import app.db.CategoryDao;
+import app.db.HcsCategoryDao;
 import app.domain.Category;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -25,8 +25,9 @@ public class Application {
     }
 
     @Bean
-    CommandLineRunner demo(CategoryDao dao) {
+    CommandLineRunner demo(HcsCategoryDao dao) {
         return args -> {
+            // Setup Listener for Events on HCS here
             System.out.println("\n\n\n");
             System.out.println("Deleting All Nodes");
             dao.deleteAll();
@@ -47,6 +48,7 @@ public class Application {
             for (Category e : entities) { dao.save(e); }
             System.out.println("All Nodes: " + dao.findAll());
             System.out.println("\n\n\n");
+            // System.exit(0); // Shut down after adding entities
         };
     }
 }

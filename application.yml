@@ -13,3 +13,10 @@ spring:
             uri: "file:///tmp/graph.db"
     devtools:
         add-properties: true
+    hedera:
+        topic_id: ${env.TOPIC_ID}
+        operator_id: ${env.OPERATOR_ID}
+        operator_key: ${env.OPERATOR_KEY}
+        network_name: ${env.NETWORK_NAME}
+        mirror_node_address: ${env.MIRROR_NODE_ADDRESS}
+        submit_key: ${env.SUBMIT_KEY:}
