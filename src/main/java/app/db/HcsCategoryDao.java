@@ -1,9 +1,9 @@
 package app.db;
 
+import java.io.IOException;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import app.domain.Category;
 import app.service.HederaConsensusService;
@@ -11,7 +11,6 @@ import app.service.HederaConsensusService;
 public class HcsCategoryDao implements CategoryDao {
 
     @Autowired
-    @Qualifier("categoryDao")
     private CategoryDao categoryDao;
 
     @Autowired
@@ -19,7 +18,12 @@ public class HcsCategoryDao implements CategoryDao {
 
     @Override
     public <S extends Category> S save(S entity) {
-        hcs.postAsync(entity);
+        try {
+            hcs.postAsync(entity);
+        } catch (IOException e) {
+            e.printStackTrace(System.err);
+        }
+
         return categoryDao.save(entity);
     }
 

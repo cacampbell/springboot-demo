@@ -2,6 +2,8 @@ package app;
 
 import app.db.HcsCategoryDao;
 import app.domain.Category;
+import app.service.HederaConsensusService;
+
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -25,9 +27,12 @@ public class Application {
     }
 
     @Bean
-    CommandLineRunner demo(HcsCategoryDao dao) {
+    CommandLineRunner demo(
+        HcsCategoryDao dao, 
+        HederaConsensusService hcs
+    ) {
         return args -> {
-            // Setup Listener for Events on HCS here
+            hcs.subscribe(System.out);
             System.out.println("\n\n\n");
             System.out.println("Deleting All Nodes");
             dao.deleteAll();

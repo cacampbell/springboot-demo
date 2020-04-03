@@ -2,15 +2,19 @@ package app.service;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
+import java.io.PrintStream;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.hedera.hashgraph.proto.mirror.ConsensusTopicQuery;
 import com.hedera.hashgraph.sdk.Client;
+import com.hedera.hashgraph.sdk.Transaction;
 import com.hedera.hashgraph.sdk.account.AccountId;
+import com.hedera.hashgraph.sdk.consensus.ConsensusMessageSubmitTransaction;
 import com.hedera.hashgraph.sdk.consensus.ConsensusTopicId;
 import com.hedera.hashgraph.sdk.crypto.ed25519.Ed25519PrivateKey;
 import com.hedera.hashgraph.sdk.mirror.MirrorClient;
+import com.hedera.hashgraph.sdk.mirror.MirrorConsensusTopicQuery;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -85,8 +89,27 @@ public class HederaConsensusService {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         JsonFactory factory = new JsonFactory();
         JsonGenerator generator = factory.createGenerator(outputStream);
-        serializer.serialize(category, generator, serializers);
+        serializer.serialize(category, generator, null);
+        byte[] msg = outputStream.toByteArray();
+        Transaction consensusTransaction = new ConsensusMessageSubmitTransaction()
+                    .setTopicId(this.topicId)
+                    .setMessage(msg)
+                    .build(this.client);
+
+            if (this.submitKey != null) {
+                consensusTransaction.sign(this.submitKey);
+            }
+
+            consensusTransaction.executeAsync(this.client, System.out::print, System.err::print);
     }
+
+	public void subscribe(PrintStream out) {
+        new MirrorConsensusTopicQuery()
+            .setTopicId(this.topicId)
+            .subscribe(this.mirrorClient, resp -> {
+                out.println("[" + resp.consensusTimestamp + "] Received HCS Message: " + resp.message);
+            }, Throwable::printStackTrace);
+	}
 
     HederaConsensusService() {
         this.operatorId = AccountId.fromString(this.operatorIdStr);
@@ -94,7 +117,9 @@ public class HederaConsensusService {
         this.topicId = ConsensusTopicId.fromString(this.topicIdStr);
 
         if (this.submitKeyStr != null && !this.submitKeyStr.isEmpty()) {
-            this.submitKey = Ed25519PrivateKey.fromString(this.submitKeyStr)
+            this.submitKey = Ed25519PrivateKey.fromString(this.submitKeyStr);
+        } else {
+            this.submitKey = null;
         }
         
         this.client = constructClient();

@@ -24,8 +24,18 @@ bootJar {
     version =  '0.0.1'
 }
 
+// Access token only has "read packages", knock yourselves out
 repositories {
     mavenCentral()
+    jcenter()
+    maven {
+        name = "Github Packages"
+        url = uri('https://maven.pkg.github.com/paulschwarz/spring-dotenv')
+        credentials {
+            username = "cacampbell" // System.getenv("GITHUB_USERNAME")
+            password = "f27c1c1a0d79746af9cb714c0891f062e7181f0c" // System.getenv("GITHUB_TOKEN")
+        }
+    }
 }
 
 sourceCompatibility = 1.8
@@ -44,6 +54,7 @@ dependencies {
     compile "org.springframework.boot:spring-boot-starter-data-rest"
     compile "org.hibernate.validator:hibernate-validator"
     compile "com.hedera.hashgraph:sdk:1.1.4"
+    compile "io.grpc:grpc-netty-shaded:1.24.0"
     compile "me.paulschwarz:spring-dotenv:0.0.5"
     
     testCompile "junit:junit"
