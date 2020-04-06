@@ -6,8 +6,8 @@ spring:
         banner-mode: "off"
     security:
         user:
-            name: "username"
-            password: "password"
+            name: ${env.API_USERNAME}
+            password: ${env.API_PASSWORD}
     data:
         neo4j:
             uri: "file:///tmp/graph.db"
