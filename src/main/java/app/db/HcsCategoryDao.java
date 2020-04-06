@@ -4,10 +4,12 @@ import java.io.IOException;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import app.domain.Category;
 import app.service.HederaConsensusService;
 
+@Repository
 public class HcsCategoryDao implements CategoryDao {
 
     @Autowired

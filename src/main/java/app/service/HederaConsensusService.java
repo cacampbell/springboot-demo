@@ -1,12 +1,9 @@
 package app.service;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.hedera.hashgraph.proto.mirror.ConsensusTopicQuery;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hedera.hashgraph.sdk.Client;
 import com.hedera.hashgraph.sdk.Transaction;
 import com.hedera.hashgraph.sdk.account.AccountId;
@@ -24,28 +21,15 @@ import app.domain.Category;
 
 @Service
 public class HederaConsensusService {
-
     @Autowired
-    private CategorySerializer serializer;
+    private ObjectMapper objectMapper;
 
-    @Value("${hedera.topic_id}")
-    String topicIdStr;
-
-    @Value("${hedera.operator_id}")
-    String operatorIdStr;
-
-    @Value("${hedera.operator_key}")
-    String operatorKeyStr;
-
-    @Value("${hedera.network_name}")
-    String networkName;
-
-    @Value("${hedera.mirror_node_address}")
-    String mirrorNodeAddressStr;
-
-    @Value("${hedera.submit_key}")
-    String submitKeyStr;
-
+    private final String topicIdStr;
+    private final String operatorIdStr;
+    private final String operatorKeyStr;
+    private final String networkName;
+    private final String mirrorNodeAddressStr;
+    private final String submitKeyStr;
     private final Client client;
     private final MirrorClient mirrorClient;
     private final AccountId operatorId;
@@ -86,11 +70,8 @@ public class HederaConsensusService {
     }
 
     public void postAsync(Category category) throws IOException {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        JsonFactory factory = new JsonFactory();
-        JsonGenerator generator = factory.createGenerator(outputStream);
-        serializer.serialize(category, generator, null);
-        byte[] msg = outputStream.toByteArray();
+        String json = objectMapper.writeValueAsString(category);
+        byte[] msg = json.getBytes();
         Transaction consensusTransaction = new ConsensusMessageSubmitTransaction()
                     .setTopicId(this.topicId)
                     .setMessage(msg)
@@ -109,9 +90,26 @@ public class HederaConsensusService {
             .subscribe(this.mirrorClient, resp -> {
                 out.println("[" + resp.consensusTimestamp + "] Received HCS Message: " + resp.message);
             }, Throwable::printStackTrace);
-	}
-
-    HederaConsensusService() {
+    }
+    
+    // Use Autowired for the Value annotations in constructor
+    // Cannot use @Value on instance members because they won't
+    // be available at construction time of the spring context
+    @Autowired
+    HederaConsensusService(
+        @Value("${spring.hedera.topic_id}") final String topicIdStr,
+        @Value("${spring.hedera.operator_id}") final String operatorIdStr,
+        @Value("${spring.hedera.operator_key}") final String operatorKeyStr,
+        @Value("${spring.hedera.network_name}") final String networkName,
+        @Value("${spring.hedera.mirror_node_address}") final String mirrorNodeAddressStr,
+        @Value("${spring.hedera.submit_key}") final String submitKeyStr) 
+    {
+        this.topicIdStr = topicIdStr;
+        this.operatorIdStr = operatorIdStr;
+        this.operatorKeyStr = operatorKeyStr;
+        this.networkName = networkName;
+        this.mirrorNodeAddressStr = mirrorNodeAddressStr;
+        this.submitKeyStr = submitKeyStr;
         this.operatorId = AccountId.fromString(this.operatorIdStr);
         this.operatorKey = Ed25519PrivateKey.fromString(this.operatorKeyStr);
         this.topicId = ConsensusTopicId.fromString(this.topicIdStr);
