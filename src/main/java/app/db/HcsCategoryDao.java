@@ -4,12 +4,14 @@ import java.io.IOException;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.stereotype.Repository;
 
 import app.domain.Category;
 import app.service.HederaConsensusService;
 
 @Repository
+@RepositoryRestResource(collectionResourceRel = "categories", path = "categories")
 public class HcsCategoryDao implements CategoryDao {
 
     @Autowired
