@@ -3,6 +3,7 @@ package app;
 import app.db.HcsEntityDao;
 import app.domain.Entity;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -37,7 +38,10 @@ public class Application {
             entity2.setChildren(new HashSet<>(Arrays.asList(entity1, entity4, entity5)));
             entity3.setChildren(new HashSet<>(Arrays.asList(entity5, entity2)));
             Entity[] entities = new Entity[]{ entity1, entity2, entity3, entity4, entity5 };
-            for (Entity e : entities) { dao.save(e); }
+            for (Entity e : entities) {
+                e.setName(RandomStringUtils.randomAlphabetic(12));
+                dao.save(e); 
+            }
         };
     }
 }
