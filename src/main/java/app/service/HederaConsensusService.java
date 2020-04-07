@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import app.domain.Category;
+import app.domain.Entity;
 
 @Service
 public class HederaConsensusService {
@@ -69,7 +69,7 @@ public class HederaConsensusService {
         return this.mirrorClient;
     }
 
-    public void postAsync(Category category) throws IOException {
+    public void postAsync(Entity category) throws IOException {
         String json = objectMapper.writeValueAsString(category);
         byte[] msg = json.getBytes();
         Transaction consensusTransaction = new ConsensusMessageSubmitTransaction()

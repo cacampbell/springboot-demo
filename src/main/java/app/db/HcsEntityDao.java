@@ -7,21 +7,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.stereotype.Repository;
 
-import app.domain.Category;
+import app.domain.Entity;
 import app.service.HederaConsensusService;
 
 @Repository
-@RepositoryRestResource(collectionResourceRel = "categories", path = "categories")
-public class HcsCategoryDao implements CategoryDao {
+@RepositoryRestResource(collectionResourceRel = "entities", path = "entities")
+public class HcsEntityDao implements EntityDao {
 
     @Autowired
-    private CategoryDao categoryDao;
+    private EntityDao categoryDao;
 
     @Autowired
     private HederaConsensusService hcs;
 
     @Override
-    public <S extends Category> S save(S entity) {
+    public <S extends Entity> S save(S entity) {
         try {
             hcs.postAsync(entity);
         } catch (IOException e) {
@@ -32,12 +32,12 @@ public class HcsCategoryDao implements CategoryDao {
     }
 
     @Override
-    public <S extends Category> Iterable<S> saveAll(Iterable<S> entities) {
+    public <S extends Entity> Iterable<S> saveAll(Iterable<S> entities) {
         return categoryDao.saveAll(entities);
     }
 
     @Override
-    public Optional<Category> findById(Long id) {
+    public Optional<Entity> findById(Long id) {
         return categoryDao.findById(id);
     }
 
@@ -47,12 +47,12 @@ public class HcsCategoryDao implements CategoryDao {
     }
 
     @Override
-    public Iterable<Category> findAll() {
+    public Iterable<Entity> findAll() {
         return categoryDao.findAll();
     }
 
     @Override
-    public Iterable<Category> findAllById(Iterable<Long> ids) {
+    public Iterable<Entity> findAllById(Iterable<Long> ids) {
         return categoryDao.findAllById(ids);
     }
 
@@ -67,12 +67,12 @@ public class HcsCategoryDao implements CategoryDao {
     }
 
     @Override
-    public void delete(Category entity) {
+    public void delete(Entity entity) {
         categoryDao.delete(entity);
     }
 
     @Override
-    public void deleteAll(Iterable<? extends Category> entities) {
+    public void deleteAll(Iterable<? extends Entity> entities) {
         categoryDao.deleteAll(entities);
     }
 

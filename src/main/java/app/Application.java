@@ -1,7 +1,7 @@
 package app;
 
-import app.db.HcsCategoryDao;
-import app.domain.Category;
+import app.db.HcsEntityDao;
+import app.domain.Entity;
 import app.service.HederaConsensusService;
 
 import org.springframework.boot.CommandLineRunner;
@@ -28,7 +28,7 @@ public class Application {
 
     @Bean
     CommandLineRunner demo(
-        HcsCategoryDao dao, 
+        HcsEntityDao dao, 
         HederaConsensusService hcs
     ) {
         return args -> {
@@ -37,20 +37,20 @@ public class Application {
             System.out.println("Deleting All Nodes");
             dao.deleteAll();
             System.out.println("All Nodes: " + dao.findAll());
-            Category category1 = new Category();
-            Category category2 = new Category();
-            Category category3 = new Category();
-            Category category4 = new Category();
-            Category category5 = new Category();
-            Category[] entities = new Category[]{ category1, category2, category3, category4, category5 };
+            Entity category1 = new Entity();
+            Entity category2 = new Entity();
+            Entity category3 = new Entity();
+            Entity category4 = new Entity();
+            Entity category5 = new Entity();
+            Entity[] entities = new Entity[]{ category1, category2, category3, category4, category5 };
             System.out.println("Saving");
-            for (Category e : entities) { dao.save(e); }
+            for (Entity e : entities) { dao.save(e); }
             System.out.println("All Nodes: " + dao.findAll());
             System.out.println("Assigning Children");
             category2.setChildren(new HashSet<>(Arrays.asList(category1, category4, category5)));
             category3.setChildren(new HashSet<>(Arrays.asList(category5, category2)));
             System.out.println("Saving");
-            for (Category e : entities) { dao.save(e); }
+            for (Entity e : entities) { dao.save(e); }
             System.out.println("All Nodes: " + dao.findAll());
             System.out.println("\n\n\n");
             // System.exit(0); // Shut down after adding entities

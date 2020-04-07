@@ -6,13 +6,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 @NodeEntity
-public class Category {
+public class Entity {
     @Id
     @GeneratedValue
     private Long id = null;
 
     @Relationship(type = "CHILDREN")
-    private Set<Category> children = new HashSet<Category>();
+    private Set<Entity> children = new HashSet<Entity>();
 
     public Long getId() {
         return id;
@@ -22,27 +22,27 @@ public class Category {
         this.id = id;
     }
 
-    public Set<Category> getChildren() {
+    public Set<Entity> getChildren() {
         return children;
     }
 
-    public void setChildren(Set<Category> children) {
+    public void setChildren(Set<Entity> children) {
         this.children = children;
     }
 
-    public void addChild(Category entity) {
+    public void addChild(Entity entity) {
         this.children.add(entity);
     }
 
-    public void addParent(Category entity) {
+    public void addParent(Entity entity) {
         entity.children.add(this);
     }
 
-    public void removeChild(Category entity) {
+    public void removeChild(Entity entity) {
         this.children.remove(entity);
     }
 
-    public void removeParent(Category entity) {
+    public void removeParent(Entity entity) {
         entity.children.remove(this);
     }
 
