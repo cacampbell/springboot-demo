@@ -19,8 +19,7 @@ public class Entity {
 
     // Annotate consensus information here?
     private ConsensusTopicId topic = null;
-    private int sequenceNumber = -1;
-    private TransactionId transactionId = null;
+    private long sequenceNumber = -1;
 
     // Updates to entities make children?
     @Relationship(type = "CHILDREN")
@@ -50,19 +49,11 @@ public class Entity {
         this.contents = contents;
     }
 
-    public TransactionId getTransactionId() {
-        return transactionId;
-    }
-
-    public void setTransactionId(TransactionId transactionId) {
-        this.transactionId = transactionId;
-    }
-
-    public int getSequenceNumber() {
+    public long getSequenceNumber() {
         return sequenceNumber;
     }
 
-    public void setSequenceNumber(int sequenceNumber) {
+    public void setSequenceNumber(long sequenceNumber) {
         this.sequenceNumber = sequenceNumber;
     }
 

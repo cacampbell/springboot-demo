@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hedera.hashgraph.sdk.Client;
 import com.hedera.hashgraph.sdk.HederaStatusException;
 import com.hedera.hashgraph.sdk.Transaction;
-import com.hedera.hashgraph.sdk.TransactionId;
+import com.hedera.hashgraph.sdk.TransactionReceipt;
 import com.hedera.hashgraph.sdk.account.AccountId;
 import com.hedera.hashgraph.sdk.consensus.ConsensusMessageSubmitTransaction;
 import com.hedera.hashgraph.sdk.consensus.ConsensusTopicId;
@@ -92,9 +92,9 @@ public class HederaConsensusService {
         consensusTransaction.executeAsync(this.client, System.out::print, System.err::print);
     }
 
-    public TransactionId postSync(final Entity entity) throws JsonProcessingException, HederaStatusException {
+    public TransactionReceipt postSync(final Entity entity) throws JsonProcessingException, HederaStatusException {
         Transaction consensusTransaction = this.hcsMessage(entity);
-        return consensusTransaction.execute(this.client);
+        return consensusTransaction.execute(this.client).getReceipt(this.client);
     }
 
 	public void subscribe(PrintStream out) {

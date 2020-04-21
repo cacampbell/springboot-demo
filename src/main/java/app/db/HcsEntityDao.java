@@ -1,7 +1,12 @@
 package app.db;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+
+import com.hedera.hashgraph.sdk.TransactionId;
+import com.hedera.hashgraph.sdk.TransactionReceipt;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
@@ -20,17 +25,32 @@ public class HcsEntityDao implements EntityDao {
     @Autowired
     private HederaConsensusService hcs;
 
-    // TODO: Use hcs to do stuff to entities on default REST actions
-    // What exactly I am not sure
+    private <S extends Entity> S annotate(S entity) {
+        try {
+            TransactionReceipt receipt = hcs.postSync(entity);
+            entity.setTopic(receipt.getConsensusTopicId());
+            entity.setSequenceNumber(receipt.getConsensusTopicSequenceNumber());
+        } catch (Exception e) {
+            e.printStackTrace(System.err);
+        }
+
+        return entity;
+    }
 
     @Override
     public <S extends Entity> S save(S entity) {
+        entity = this.annotate(entity);
         return categoryDao.save(entity);
     }
 
     @Override
     public <S extends Entity> Iterable<S> saveAll(Iterable<S> entities) {
-        return categoryDao.saveAll(entities);
+        ArrayList<S> annotatedEntities = new ArrayList<S>();
+        for (S entity : entities) {
+            annotatedEntities.add(this.annotate(entity));
+        }
+        
+        return categoryDao.saveAll(annotatedEntities);
     }
 
     @Override
