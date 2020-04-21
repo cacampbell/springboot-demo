@@ -5,7 +5,6 @@ import org.neo4j.ogm.annotation.*;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.hedera.hashgraph.sdk.TransactionId;
 import com.hedera.hashgraph.sdk.consensus.ConsensusTopicId;
 
 @NodeEntity
@@ -17,11 +16,10 @@ public class Entity {
     private String name = "";
     private String contents = "";
 
-    // Annotate consensus information here?
     private ConsensusTopicId topic = null;
     private long sequenceNumber = -1;
+    private byte[] runningHash = null;
 
-    // Updates to entities make children?
     @Relationship(type = "CHILDREN")
     private Set<Entity> children = new HashSet<Entity>();
 
@@ -47,6 +45,14 @@ public class Entity {
 
     public void setContents(String contents) {
         this.contents = contents;
+    }
+
+    public byte[] getRunningHash() {
+        return runningHash;
+    }
+
+    public void setRunningHash(byte[] runningHash) {
+        this.runningHash = runningHash;
     }
 
     public long getSequenceNumber() {

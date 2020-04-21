@@ -30,6 +30,7 @@ public class HcsEntityDao implements EntityDao {
             TransactionReceipt receipt = hcs.postSync(entity);
             entity.setTopic(receipt.getConsensusTopicId());
             entity.setSequenceNumber(receipt.getConsensusTopicSequenceNumber());
+            entity.setRunningHash(receipt.getConsensusTopicRunningHash());
         } catch (Exception e) {
             e.printStackTrace(System.err);
         }
