@@ -20,14 +20,11 @@ public class HcsEntityDao implements EntityDao {
     @Autowired
     private HederaConsensusService hcs;
 
+    // TODO: Use hcs to do stuff to entities on default REST actions
+    // What exactly I am not sure
+
     @Override
     public <S extends Entity> S save(S entity) {
-        try {
-            hcs.postAsync(entity);
-        } catch (IOException e) {
-            e.printStackTrace(System.err);
-        }
-
         return categoryDao.save(entity);
     }
 

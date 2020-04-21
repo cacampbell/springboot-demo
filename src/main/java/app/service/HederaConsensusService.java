@@ -3,9 +3,12 @@ package app.service;
 import java.io.IOException;
 import java.io.PrintStream;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hedera.hashgraph.sdk.Client;
+import com.hedera.hashgraph.sdk.HederaStatusException;
 import com.hedera.hashgraph.sdk.Transaction;
+import com.hedera.hashgraph.sdk.TransactionId;
 import com.hedera.hashgraph.sdk.account.AccountId;
 import com.hedera.hashgraph.sdk.consensus.ConsensusMessageSubmitTransaction;
 import com.hedera.hashgraph.sdk.consensus.ConsensusTopicId;
@@ -69,8 +72,8 @@ public class HederaConsensusService {
         return this.mirrorClient;
     }
 
-    public void postAsync(Entity category) throws IOException {
-        String json = objectMapper.writeValueAsString(category);
+    private Transaction hcsMessage(final Entity entity) throws JsonProcessingException {
+        String json = objectMapper.writeValueAsString(entity);
         byte[] msg = json.getBytes();
         Transaction consensusTransaction = new ConsensusMessageSubmitTransaction()
                     .setTopicId(this.topicId)
@@ -81,7 +84,17 @@ public class HederaConsensusService {
                 consensusTransaction.sign(this.submitKey);
             }
 
-            consensusTransaction.executeAsync(this.client, System.out::print, System.err::print);
+        return consensusTransaction;
+    }
+
+    public void postAsync(final Entity entity) throws IOException, JsonProcessingException {
+        Transaction consensusTransaction = this.hcsMessage(entity);
+        consensusTransaction.executeAsync(this.client, System.out::print, System.err::print);
+    }
+
+    public TransactionId postSync(final Entity entity) throws JsonProcessingException, HederaStatusException {
+        Transaction consensusTransaction = this.hcsMessage(entity);
+        return consensusTransaction.execute(this.client);
     }
 
 	public void subscribe(PrintStream out) {
